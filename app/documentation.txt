@@ -1,0 +1,37 @@
+Текущие транспортні !!!!
+select * from TRV_SPREAD_TRANS_ORDERS_FAST t
+
+
+Содержимое склада !!!!
+select * from QWHV_SPREAD_WHS_CONTENTS_UB t
+
+
+Відправки
+select * from SHV_SPREAD_SHIPMENTS t
+
+
+Погрузки
+select * from LDV_SPREAD_LOADINGS t
+
+Привязки артикулів до місць збору
+select * QWHV_SPREAD_SP_ASSIGNMENT
+
+Артикули
+select * from QCMV_SPREAD_PRODUCTS t
+
+
+Поставки
+select * from QWHV_SPREAD_DELIVERY_ITEMS t
+
+
+
+Заявки від клієнтів
+
+
+Закази
+
+BOT = 5662776987:AAFNQiftIFBgayordIizZxMeRDcZWCmq7Ao
+
+TEST_BOT = 6032467861:AAFV3QHO26r3kpKBkaTpOf49geo2isvuJ1U
+
+chat_id = -1001799203358
