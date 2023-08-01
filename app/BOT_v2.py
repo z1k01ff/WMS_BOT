@@ -2,7 +2,9 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from DB import privyazka_DB, soderzimoe_DB, vidpravka_DB, transport_DB, transport_perep_DB, transport_peremish_st, transport_peremish_in, transport_vidpravka_bl
+from DB import privyazka_DB, soderzimoe_DB, vidpravka_DB, \
+    transport_DB, transport_perep_DB, transport_peremish_st, \
+    transport_peremish_in, transport_vidpravka_bl, soderzimoe_full_DB
 
 bot = Bot(token="5662776987:AAFNQiftIFBgayordIizZxMeRDcZWCmq7Ao")
 storage = MemoryStorage()
@@ -24,7 +26,9 @@ btn_berta_popovn = KeyboardButton('☮ Поповнення')
 btn_berta_vidpravka = KeyboardButton('☯ Відправка')
 # btn_berta_perep = KeyboardButton('✡ Перепаковка')
 btn_berta_privyazka = KeyboardButton("Прив'язка")
-btn_berta_zalishok = KeyboardButton("Залишок")
+btn_berta_vmist = KeyboardButton("Вміст складу")
+
+
 
 
 
@@ -34,13 +38,18 @@ btn_blyzenko_peremisch = KeyboardButton('ℹ️ Переміщення')
 # btn_blyzenko_peremisch_st = KeyboardButton('ℹ️ Переміщення ST*')
 btn_blyzenko_vidpravka = KeyboardButton('ℹ️ Відправка')
 
+btn_soder_nisiy = KeyboardButton('Носій')
+btn_artikul = KeyboardButton('Номер артикула')
+btn_nazva_artikulf = KeyboardButton('Назва артикула')
+
 
 
 
 main_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_berta, btn_blyzenko, btn_other)
 other_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_info, btn_main)
-berta_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_berta_popovn, btn_berta_vidpravka, btn_back, btn_berta_privyazka, btn_berta_zalishok)
+berta_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_berta_popovn, btn_berta_vidpravka, btn_back, btn_berta_privyazka, btn_berta_vmist)
 blyzenko_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_blyzenko_peremisch, btn_blyzenko_vidpravka, btn_back)
+vmist_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_soder_nisiy, btn_artikul, btn_nazva_artikulf, btn_back)
 
 @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
@@ -158,6 +167,30 @@ async def back_menu_btn(message: types.Message):
         await bot.send_photo(message.chat.id, photo)
     await bot.send_message(message.from_user.id, 'Відправка ⤴️')
 
+@dp.message_handler(lambda message: message.text == "Вміст складу")
+async def berta_menu_btn(message: types.Message):
+    await bot.send_message(message.from_user.id, '🟡 Відкриваю меню Вміст...', reply_markup=vmist_menu)
+
+
+@dp.message_handler(lambda message: message.text == "Носій")
+async def handle_topup(message: types.Message):
+    await message.reply("шукаємо по носію:")
+
+    # Зберігаємо ID користувача та текст повідомлення в контексті
+    await bot.get_chat_member(message.chat.id, message.from_user.id)
+    context = dp.current_state(user=message.from_user.id)
+    await context.set_state('vmist_state')
+
+@dp.message_handler(state='vmist_state')
+async def process_topup_text(message: types.Message, state: State):
+    # Отримуємо текст з повідомлення
+    soderzimoe_full_DB(message.text, "LOADUNIT_ID")
+
+    # Скидаємо стан
+    await state.finish()
+
+    with open("PNG/soderzimoe_full.png", 'rb') as photo:
+        await bot.send_photo(message.chat.id, photo)
 
 
 
@@ -166,3 +199,8 @@ if __name__ == '__main__':
     from aiogram import executor
 
     executor.start_polling(dp)
+
+
+
+
+

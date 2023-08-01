@@ -1,7 +1,4 @@
-import getpass
 import oracledb
-import os
-import json
 import pandas as pd
 import dataframe_image as dfi
 
@@ -54,7 +51,9 @@ def vidpravka_DB():
     df = pd.read_sql(sql, connection)
     dfi.export(df, 'PNG/vidpravka.png')
     # print(df)
-    piec_df = df[df['PZONE_NR'].isin(['Нестле шт', 'Спец пуріна шт', 'Підбір ЖуйкаФерреро шт', 'Берта шт', 'Марс шт', 'Болеро шт', 'Підбір Юнілевер'])]
+    piec_df = df[df['PZONE_NR'].isin(
+        ['Нестле шт', 'Спец пуріна шт', 'Підбір ЖуйкаФерреро шт', 'Берта шт', 'Марс шт', 'Болеро шт',
+         'Підбір Юнілевер'])]
     pack_df = df[df['PZONE_NR'].isin(['Підбір Болеро 2 ящ', 'Підбір дистрибуція ящ', 'Підбір Болеро ящ', 'Спец пуріна',
                                       'Підбір Нестле ящ', 'Підбір Жуйка ящ', 'Підбір Ферерро ящ Львів',
                                       'Підбір БС Крупи',
@@ -91,6 +90,7 @@ def transport_DB(tip_pocheniya):
     dfi.export(df, 'PNG/transport.png')
     print(df)
 
+
 def transport_perep_DB(tip_pocheniya):
     sql = f"select product_nr, COUNT(product_nr) as KILKIST from TRV_SPREAD_TRANS_ORDERS_FAST " \
           f"where transport_type_id = '{tip_pocheniya}' " \
@@ -101,6 +101,7 @@ def transport_perep_DB(tip_pocheniya):
     df = df.sort_values(by='KILKIST', ascending=True)
     dfi.export(df, 'PNG/transport_perep.png')
     print(df)
+
 
 def transport_vidpravka_marshrut():
     sql = f"select sroute_name as MARSHRUT, COUNT(sroute_name) as KILKIST from TRV_SPREAD_TRANS_ORDERS_FAST " \
@@ -113,7 +114,6 @@ def transport_vidpravka_marshrut():
 
 
 def vidpravka_red():
-
     sql = f"select  firm_name, sroute_name as MARSHRUT, COUNT(sroute_name) as KILKIST " \
           f"from SHV_SPREAD_SHIPMENTS t " \
           f"where status_name in ('Заплановано', 'Реалізація') and cf like '<GC><ROW><CLR BC%' and wh_nr = 1 " \
@@ -123,6 +123,7 @@ def vidpravka_red():
     df = df._append(sum_df, ignore_index=True)
     dfi.export(df, 'PNG/vidpravka_red.png')
     print(df)
+
 
 def vidpravka_nabrano(date_started):
     sql = f"select sroute_name as MARSHRUT, COUNT(sroute_name) as KILKIST " \
@@ -154,6 +155,7 @@ def transport_peremish_st():
     dfi.export(df, 'PNG/transport_perem_ST.png')
     print(df)
 
+
 def transport_vidpravka_bl():
     sql = f"select sroute_name as MARSHRUT, COUNT(sroute_name) as KILKIST from TRV_SPREAD_TRANS_ORDERS_FAST " \
           f"where transport_type_id = 'SH' and f_firm_nr = 'Близенько' " \
@@ -162,11 +164,41 @@ def transport_vidpravka_bl():
     dfi.export(df, 'PNG/transport_vidpravka_bl.png')
     print(df)
 
+
+# LOADUNIT_ID номер носителя без букв
+# PRODUCT_NR номер артикула
+# PRODUCT_NAME Назва товару
+def soderzimoe_full_DB(input_data, input_type):
+    sql = f"select LOADUNIT_NR, PRODUCT_NR, PRODUCT_NAME, SP_NR  " \
+          f"from QWHV_SPREAD_WHS_CONTENTS_UB t where {input_type} = '{input_data}' " \
+          f"and wh_nr = 1 and SA_NR BETWEEN 'A' and 'B'"
+    df = pd.read_sql(sql, connection)
+
+    dfi.export(df, 'PNG/soderzimoe_full.png')
+    df.to_excel('exel/soderzimoe_full.xlsx')
+    print(df.head())
+    return df
+
+def soderzimoe_full_DB_t(input_data, input_type):
+    sql = f'select LOADUNIT_NR, PRODUCT_NR, PRODUCT_NAME, PRODUCT_CLASS, SERIAL_NR, ' \
+          f'DATE_EXPIRE, DATE_PROD, BU_QUANTITY, QUANTITY_PACK, BU_QUANTITY_MOD, ABBREV, ' \
+          f'SA_NR, SP_NR, STATUS_QUALITY_DESC, EAN_NR  ' \
+          f'from QWHV_SPREAD_WHS_CONTENTS_UB where {input_type} like \'{input_data}\' ' \
+          f'and wh_nr = 1 and SA_NR BETWEEN \'A\' and \'B\''
+    df = pd.read_sql(sql, connection)
+
+    # dfi.export(df, 'PNG/soderzimoe_full.png')
+    df.to_excel('exel/soderzimoe_full_t.xlsx')
+    print(df.head())
+    return df
+
+
 if __name__ == '__main__':
     # vidpravka_DB()
     # transport_DB("RP")
     # transport_perep_DB("CP")
     # transport_peremish_in("MV")
     # transport_peremish_st()
-    vidpravka_nabrano("15.06.2023")
-    vidpravka_red()
+    # vidpravka_nabrano("15.06.2023")
+    # vidpravka_red()
+    soderzimoe_full_DB_t("%", "PRODUCT_NR")
