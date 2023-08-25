@@ -41,6 +41,7 @@ btn_blyzenko_vidpravka = KeyboardButton('ℹ️ Відправка')
 btn_soder_nisiy = KeyboardButton('Носій')
 btn_artikul = KeyboardButton('Номер артикула')
 btn_nazva_artikulf = KeyboardButton('Назва артикула')
+btn_soder_test = KeyboardButton('Тест')
 
 
 
@@ -49,7 +50,8 @@ main_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_berta, btn_blyzenk
 other_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_info, btn_main)
 berta_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_berta_popovn, btn_berta_vidpravka, btn_back, btn_berta_privyazka, btn_berta_vmist)
 blyzenko_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_blyzenko_peremisch, btn_blyzenko_vidpravka, btn_back)
-vmist_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_soder_nisiy, btn_artikul, btn_nazva_artikulf, btn_back)
+vmist_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_soder_nisiy, btn_artikul, btn_nazva_artikulf, btn_soder_test, btn_back)
+# vmist_menu.add(btn_back)
 
 @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
@@ -171,6 +173,46 @@ async def back_menu_btn(message: types.Message):
 async def berta_menu_btn(message: types.Message):
     await bot.send_message(message.from_user.id, '🟡 Відкриваю меню Вміст...', reply_markup=vmist_menu)
 
+@dp.message_handler(lambda message: message.text == "Тест")
+async def search_by_nosiy_test(message: types.Message):
+    await message.reply("шукаємо по носію тест:")
+
+    # Зберігаємо ID користувача та текст повідомлення в контексті
+    await bot.get_chat_member(message.chat.id, message.from_user.id)
+    context = dp.current_state(user=message.from_user.id)
+    await context.set_state('vmist_state_test')
+
+@dp.message_handler(state='vmist_state_test')
+async def state_search_by_nosiy_test(message: types.Message, state: State):
+
+    df = soderzimoe_full_DB(message.text, "LOADUNIT_ID")
+
+    vmist_menu_test = ReplyKeyboardMarkup(resize_keyboard=True)
+
+    for PRODUCT_NAME in df["PRODUCT_NAME"]:
+        vmist_menu_test.add(KeyboardButton(PRODUCT_NAME))
+
+    await bot.send_message(message.from_user.id, '🟡 Відкриваю меню TEST...', reply_markup=vmist_menu_test)
+    # Скидаємо стан
+    await state.finish()
+
+    # Зберігаємо ID користувача та текст повідомлення в контексті
+    await bot.get_chat_member(message.chat.id, message.from_user.id)
+    context = dp.current_state(user=message.from_user.id)
+    await context.set_state('vmist_state_test_no2')
+
+@dp.message_handler(state='vmist_state_test_no2')
+async def state_search_by_nosiy_test(message: types.Message, state: State):
+    # await bot.send_message(message.from_user.id, 'ON STATE')
+    # Отримуємо текст з повідомлення
+    soderzimoe_full_DB(message.text, "PRODUCT_NAME")
+
+    # Скидаємо стан
+    await state.finish()
+
+    with open("PNG/soderzimoe_full.png", 'rb') as photo:
+        await bot.send_photo(message.chat.id, photo)
+    await bot.send_message(message.from_user.id, '🟡 Відкриваю меню Вміст...', reply_markup=vmist_menu)
 
 @dp.message_handler(lambda message: message.text == "Носій")
 async def handle_topup(message: types.Message):

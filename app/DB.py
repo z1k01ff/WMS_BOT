@@ -169,7 +169,7 @@ def transport_vidpravka_bl():
 # PRODUCT_NR номер артикула
 # PRODUCT_NAME Назва товару
 def soderzimoe_full_DB(input_data, input_type):
-    sql = f"select LOADUNIT_NR, PRODUCT_NR, PRODUCT_NAME, SP_NR  " \
+    sql = f"select LOADUNIT_NR, PRODUCT_NR, PRODUCT_NAME, BU_QUANTITY as kilkist, QUANTITY_PACK as kilkist_PACK, BU_QUANTITY_MOD as kilkist_sht, SP_NR  " \
           f"from QWHV_SPREAD_WHS_CONTENTS_UB t where {input_type} = '{input_data}' " \
           f"and wh_nr = 1 and SA_NR BETWEEN 'A' and 'B'"
     df = pd.read_sql(sql, connection)
@@ -201,4 +201,4 @@ if __name__ == '__main__':
     # transport_peremish_st()
     # vidpravka_nabrano("15.06.2023")
     # vidpravka_red()
-    soderzimoe_full_DB_t("%", "PRODUCT_NR")
+    soderzimoe_full_DB("000063815", "PRODUCT_NR")

@@ -1,0 +1,4 @@
+import urllib.request
+destination = 'название файла.pdf'
+url = 'http://wms_ub1rds.berta.corp:9000/?cmd=rfsh&f.expand_where=+QWHV_RPT_DELIVERY.DELIVERY_ID+%3D+142462&f.firmaddress=27UA&f.firmname=27UA&f.nodbdef=true&f.password=haaalr%2Btinuqaaqm&f.project=wmsprod&f.qprint_id=1691516708633-88935&f.query=&f.title=%D0%9F%D0%B5%D1%87%D0%B0%D1%82%D1%8C+%D0%BF%D0%BE%D1%81%D1%82%D0%B0%D0%B2%D0%BA%D0%B8&f.user=NTKACH&f.usertxt=%D0%9F%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%3A+&language=russian&name=wmsprod&report=delivery&report_copies=1&report_title=%D0%9F%D0%B5%D1%87%D0%B0%D1%82%D1%8C+%D0%BF%D0%BE%D1%81%D1%82%D0%B0%D0%B2%D0%BA%D0%B8&schema=qguaradm&sender=SafenaEngine&url=http%3A%2F%2FWMS_UB1RDS.berta.corp%3A9000%2F&view=true'
+urllib.request.urlretrieve(url, destination)

@@ -5,10 +5,10 @@ SENDER_LOGIN = 'berta/ntkach'
 APP_PASSWORD = "Qwerty32"
 
 
-subject = "test"
+subject = "BAYOYAYO BAYOYAYO"
 SENDER_EMAIL = "ntkach@ub1.com.ua"
-recipient_email = ["ntkach@ub1.com.ua", 'vchornyi@blyzenko.com.ua']
-content = "00"
+recipient_email = ['nsynovska@ub1.com.ua']
+content = "NATALI PIPISYA"
 excel_file = "/Users/admin/PycharmProjects/WMS_BOT/app/exel/soderzimoe_full_t.xlsx"
 msg = EmailMessage()
 msg['Subject'] = subject
