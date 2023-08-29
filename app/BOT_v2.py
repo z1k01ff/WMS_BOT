@@ -5,7 +5,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from DB import privyazka_DB, soderzimoe_DB, vidpravka_DB, \
     transport_DB, transport_perep_DB, transport_peremish_st, \
     transport_peremish_in, transport_vidpravka_bl, soderzimoe_full_DB
-
+import json
 bot = Bot(token="5662776987:AAFNQiftIFBgayordIizZxMeRDcZWCmq7Ao")
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
@@ -53,9 +53,23 @@ blyzenko_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_blyzenko_perem
 vmist_menu = ReplyKeyboardMarkup(resize_keyboard=True).add(btn_soder_nisiy, btn_artikul, btn_nazva_artikulf, btn_soder_test, btn_back)
 # vmist_menu.add(btn_back)
 
+def load_whitelist(filename):
+    with open(filename, 'r') as file:
+        data = json.load(file)
+        return data.get("admin_user_ids", [])
+
+
+
+
 @dp.message_handler(commands=['start'])
-async def start_command(message: types.Message):
-    await bot.send_message(message.from_user.id, f"👋 Привіт, {message.from_user.first_name}!", reply_markup=main_menu)
+async def whitelist(message: types.Message):
+    whitelistt = load_whitelist('whitelist.json')
+    if message.from_user.id not in whitelistt:
+        await message.answer("Ви не в WHITELIST")
+    else:
+        await bot.send_message(message.from_user.id, f"👋 Привіт, {message.from_user.first_name}!",
+                               reply_markup=main_menu)
+
 
 # Кнопки МЕНЮ
 @dp.message_handler(lambda message: message.text == "♈ Берта")
@@ -78,11 +92,11 @@ async def back_menu_btn(message: types.Message):
     transport_DB('RP')
     transport_perep_DB("CP")
 
-    with open("PNG/transport.png", 'rb') as photo:
+    with open("cache/PNG/transport.png", 'rb') as photo:
         await bot.send_photo(message.chat.id, photo)
     await bot.send_message(message.from_user.id, 'Поповнення ⤴️')
 
-    with open("PNG/transport_perep.png", 'rb') as photo:
+    with open("cache/PNG/transport_perep.png", 'rb') as photo:
         await bot.send_photo(message.chat.id, photo)
     await bot.send_message(message.from_user.id, 'Переупаковки ⤴️')
 
@@ -92,10 +106,10 @@ async def popovnenya(message: types.Message):
     await bot.send_message(message.from_user.id, 'Завантажую інформацію... ⏳')
     vidpravka_DB()
 
-    with open("PNG/vidpravka_pack.png", 'rb') as photo:
+    with open("cache/PNG/vidpravka_pack.png", 'rb') as photo:
         await bot.send_photo(message.chat.id, photo)
     await bot.send_message(message.from_user.id, 'Ящична зона ⤴️')
-    with open("PNG/vidpravka_piec.png", 'rb') as photo:
+    with open("cache/PNG/vidpravka_piec.png", 'rb') as photo:
         await bot.send_photo(message.chat.id, photo)
     await bot.send_message(message.from_user.id, 'Штучна зона ⤴️')
 
@@ -119,7 +133,7 @@ async def privyazka_state(message: types.Message, state: State):
     # Скидаємо стан
     await state.finish()
 
-    with open("PNG/privyazka.png", 'rb') as photo:
+    with open("cache/PNG/privyazka.png", 'rb') as photo:
         await bot.send_photo(message.chat.id, photo)
 
 # Залишок на складі функція
@@ -141,7 +155,7 @@ async def process_topup_text(message: types.Message, state: State):
     # Скидаємо стан
     await state.finish()
 
-    with open("PNG/soderzimoe.png", 'rb') as photo:
+    with open("cache/PNG/soderzimoe.png", 'rb') as photo:
         await bot.send_photo(message.chat.id, photo)
 
 # БЛИЗЕНЬКО
@@ -152,11 +166,11 @@ async def back_menu_btn(message: types.Message):
     transport_peremish_st()
     transport_peremish_in()
 
-    with open("PNG/transport_perem_IN.png", 'rb') as photo:
+    with open("cache/PNG/transport_perem_IN.png", 'rb') as photo:
         await bot.send_photo(message.chat.id, photo)
     await bot.send_message(message.from_user.id, 'Переміщення IN-* ⤴️')
 
-    with open("PNG/transport_perem_ST.png", 'rb') as photo:
+    with open("cache/PNG/transport_perem_ST.png", 'rb') as photo:
         await bot.send_photo(message.chat.id, photo)
     await bot.send_message(message.from_user.id, 'Переміщення ST-* ⤴️')
 
@@ -165,7 +179,7 @@ async def back_menu_btn(message: types.Message):
     await bot.send_message(message.from_user.id, 'Завантажую інформацію... ⏳')
     transport_vidpravka_bl()
 
-    with open("PNG/transport_vidpravka_bl.png", 'rb') as photo:
+    with open("cache/PNG/transport_vidpravka_bl.png", 'rb') as photo:
         await bot.send_photo(message.chat.id, photo)
     await bot.send_message(message.from_user.id, 'Відправка ⤴️')
 
@@ -210,7 +224,7 @@ async def state_search_by_nosiy_test(message: types.Message, state: State):
     # Скидаємо стан
     await state.finish()
 
-    with open("PNG/soderzimoe_full.png", 'rb') as photo:
+    with open("cache/PNG/soderzimoe_full.png", 'rb') as photo:
         await bot.send_photo(message.chat.id, photo)
     await bot.send_message(message.from_user.id, '🟡 Відкриваю меню Вміст...', reply_markup=vmist_menu)
 
@@ -231,7 +245,7 @@ async def process_topup_text(message: types.Message, state: State):
     # Скидаємо стан
     await state.finish()
 
-    with open("PNG/soderzimoe_full.png", 'rb') as photo:
+    with open("cache/PNG/soderzimoe_full.png", 'rb') as photo:
         await bot.send_photo(message.chat.id, photo)
 
 

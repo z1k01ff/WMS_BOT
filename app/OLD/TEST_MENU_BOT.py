@@ -1,11 +1,7 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton  # pip install aiogram
 from aiogram import Dispatcher, Bot, executor, types
-import json
-from selenium_to_txt import json_open
 import asyncio
-from DB import pandas
-from DB import privyazka
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
