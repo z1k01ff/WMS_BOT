@@ -2,7 +2,8 @@ import oracledb
 import pandas as pd
 import dataframe_image as dfi
 
-CLIENT_DIR = "/Users/admin/Documents/instantclient_19_8/"
+# CLIENT_DIR = "/Users/admin/Documents/instantclient_19_8/"
+CLIENT_DIR = "E:\instantclient_21_11"
 oracledb.init_oracle_client(lib_dir=CLIENT_DIR, config_dir=None, error_url=None, driver_name=None)
 connection = oracledb.connect(
     user="qguaradm",
@@ -121,7 +122,7 @@ def vidpravka_red():
     df = pd.read_sql(sql, connection)
     sum_df = {'FIRM_NAME': 'INFO', 'MARSHRUT': 'НЕ ПОПОВНЕНО НАКЛАДНИХ', 'KILKIST': df['KILKIST'].sum()}
     df = df._append(sum_df, ignore_index=True)
-    dfi.export(df, 'cache/PNG/vidpravka_red.png')
+    # dfi.export(df, 'cache/PNG/vidpravka_red.png')
     print(df)
 
 
@@ -200,5 +201,5 @@ if __name__ == '__main__':
     # transport_peremish_in("MV")
     # transport_peremish_st()
     # vidpravka_nabrano("15.06.2023")
-    # vidpravka_red()
-    soderzimoe_full_DB("000063815", "PRODUCT_NR")
+    vidpravka_red()
+    # soderzimoe_full_DB("000063815", "PRODUCT_NR")
