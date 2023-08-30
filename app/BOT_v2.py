@@ -6,6 +6,8 @@ from DB import privyazka_DB, soderzimoe_DB, vidpravka_DB, \
     transport_DB, transport_perep_DB, transport_peremish_st, \
     transport_peremish_in, transport_vidpravka_bl, soderzimoe_full_DB
 import json
+
+
 bot = Bot(token="5662776987:AAFNQiftIFBgayordIizZxMeRDcZWCmq7Ao")
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)

@@ -1,6 +1,10 @@
 import oracledb
 import pandas as pd
 import dataframe_image as dfi
+import warnings
+import matplotlib
+
+warnings.filterwarnings('ignore')
 
 # CLIENT_DIR = "/Users/admin/Documents/instantclient_19_8/"
 CLIENT_DIR = "E:\instantclient_21_11"
@@ -50,6 +54,7 @@ def vidpravka_DB():
           "'Підбір Загальний Нестле М', 'Підбір Кондзона Нестле МК')" \
           "GROUP by pzone_nr"
     df = pd.read_sql(sql, connection)
+    # df = df.style.background_gradient()
     dfi.export(df, 'cache/PNG/vidpravka.png')
     # print(df)
     piec_df = df[df['PZONE_NR'].isin(
@@ -88,6 +93,7 @@ def transport_DB(tip_pocheniya):
     sum_df = {'PZONE_NR': "КІЛЬКІСТЬ ПОПОВНЕНЬ", 'KILKIST': df['KILKIST'].sum()}
     df = df._append(sum_df, ignore_index=True)
     df = df.sort_values(by='KILKIST', ascending=True)
+    # df = df.style.background_gradient()
     dfi.export(df, 'cache/PNG/transport.png')
     print(df)
 
@@ -122,7 +128,7 @@ def vidpravka_red():
     df = pd.read_sql(sql, connection)
     sum_df = {'FIRM_NAME': 'INFO', 'MARSHRUT': 'НЕ ПОПОВНЕНО НАКЛАДНИХ', 'KILKIST': df['KILKIST'].sum()}
     df = df._append(sum_df, ignore_index=True)
-    # dfi.export(df, 'cache/PNG/vidpravka_red.png')
+    dfi.export(df, 'cache/PNG/vidpravka_red.png')
     print(df)
 
 
@@ -174,10 +180,10 @@ def soderzimoe_full_DB(input_data, input_type):
           f"from QWHV_SPREAD_WHS_CONTENTS_UB t where {input_type} = '{input_data}' " \
           f"and wh_nr = 1 and SA_NR BETWEEN 'A' and 'B'"
     df = pd.read_sql(sql, connection)
-
+    df = df.style.background_gradient()
     dfi.export(df, 'cache/PNG/soderzimoe_full.png')
-    df.to_excel('exel/soderzimoe_full.xlsx')
-    print(df.head())
+    # df.to_excel('cache/exel/soderzimoe_full.xlsx')
+    # print(df.head())
     return df
 
 def soderzimoe_full_DB_t(input_data, input_type):
@@ -188,18 +194,18 @@ def soderzimoe_full_DB_t(input_data, input_type):
           f'and wh_nr = 1 and SA_NR BETWEEN \'A\' and \'B\''
     df = pd.read_sql(sql, connection)
 
-    # dfi.export(df, 'PNG/soderzimoe_full.png')
-    df.to_excel('exel/soderzimoe_full_t.xlsx')
+    dfi.export(df, 'PNG/soderzimoe_full.png')
+    # df.to_excel('exel/soderzimoe_full_t.xlsx')
     print(df.head())
     return df
 
 
 if __name__ == '__main__':
-    # vidpravka_DB()
+    vidpravka_DB()
     # transport_DB("RP")
     # transport_perep_DB("CP")
     # transport_peremish_in("MV")
     # transport_peremish_st()
     # vidpravka_nabrano("15.06.2023")
-    vidpravka_red()
+    # vidpravka_red()
     # soderzimoe_full_DB("000063815", "PRODUCT_NR")
