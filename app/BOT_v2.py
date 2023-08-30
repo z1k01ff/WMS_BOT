@@ -59,8 +59,6 @@ def load_whitelist(filename):
         return data.get("admin_user_ids", [])
 
 
-
-
 @dp.message_handler(commands=['start'])
 async def whitelist(message: types.Message):
     whitelistt = load_whitelist('whitelist.json')
